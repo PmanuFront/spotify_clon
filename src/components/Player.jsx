@@ -34,7 +34,7 @@ const SongControl = ({ audio }) => {
     }
 
     const formatTime = (time) => {
-        if(time == null) return
+        if(time == null) return `0:00`
 
         const seconds = Math.floor(time % 60);
         const minutes = Math.floor(time / 60);
@@ -46,17 +46,16 @@ const SongControl = ({ audio }) => {
         <div className="flex gap-x-3 text-xs pt-2">
             <span className="opacity-50 w-12 text-right">{formatTime(currentTime)}</span>
             <Slider 
-                defaultValue={[0]}
+                value={[currentTime]}
                 max={audio?.current?.duration ?? 0}
                 min={0}
-                value={[currentTime]}
                 className="w-[400px]"
                 onValueChange={(value) => {
-                    const newCurrentTime = [value];
+                    const [newCurrentTime] = value;
                     audio.current.currentTime = newCurrentTime;
                 }}
             />
-            <span className="opacity-50 w-12">{ duration ? formatTime(duration) : null}</span>
+            <span className="opacity-50 w-12">{ duration ? formatTime(duration) : '0:00'}</span>
         </div>
     )
 }
@@ -127,16 +126,13 @@ const CurrentSong = ({ image, title, artists }) => {
 
 
 export const Player = () => {
-
-    const { currentMusic ,isPlaying, setIsPlaying, volume } = usePlayerStore(state => state);
+    const { currentMusic ,isPlaying, setIsPlaying, setCurrentMusic, volume } = usePlayerStore(state => state);
     const audioRef = useRef();
-    const volumeRef = useRef(1);
 
     useEffect(() => {
         isPlaying
         ? audioRef.current.play()
         : audioRef.current.pause()
-        audioRef.current.src = `/music/1/01.mp3`
     }, [isPlaying])
 
     useEffect(() => {
